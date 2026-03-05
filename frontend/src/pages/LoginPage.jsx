@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import gsap from "gsap";
 
-const API_BASE = "https://ats-backend-fp45.onrender.com/api";
+const API_BASE = "https://ats-backend-fp45.onrender.com";
 function LoginPage() {
   const navigate = useNavigate();
   const cardRef = useRef(null);
