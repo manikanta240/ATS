@@ -16,15 +16,21 @@ const app = express();
 app.use(cors({ origin: "*" }));
 app.use(express.json());
 
+/* Resolve project root */
 const __dirname = path.resolve();
 
-/* Serve React build */
-app.use(express.static(path.join(__dirname, "../../frontend/dist")));
+/* React build directory */
+const frontendPath = path.join(__dirname, "frontend", "dist");
 
+/* Serve React static files */
+app.use(express.static(frontendPath));
+
+/* Environment variables */
 const MONGO_URI = process.env.MONGO_URI;
 const PORT = process.env.PORT || 4000;
 
-/* API Routes */
+/* ---------------- API ROUTES ---------------- */
+
 app.get("/api/health", (_req, res) => {
   res.json({ status: "ok", service: "openats-plus-backend" });
 });
@@ -34,18 +40,22 @@ app.use("/api/jobs", jobRoutes);
 app.use("/api/applications", applicationRoutes);
 app.use("/api/contact", contactRoutes);
 
-/* uploads */
+/* ---------------- FILE UPLOADS ---------------- */
+
 const uploadsDir =
-  process.env.UPLOADS_DIR || path.join(process.cwd(), "uploads");
+  process.env.UPLOADS_DIR || path.join(__dirname, "uploads");
 
 app.use("/uploads", express.static(uploadsDir));
 
-/* React fallback route (LAST) */
-app.use((req, res) => {
-  res.sendFile(path.join(__dirname, "../../frontend/dist/index.html"));
+/* ---------------- REACT FALLBACK ---------------- */
+/* This must be LAST */
+
+app.get("*", (req, res) => {
+  res.sendFile(path.join(frontendPath, "index.html"));
 });
 
-/* Start server */
+/* ---------------- SERVER START ---------------- */
+
 async function start() {
   try {
     await mongoose.connect(MONGO_URI);
