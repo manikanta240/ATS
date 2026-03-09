@@ -2,7 +2,7 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
-import path from "node:path";
+import path from "path";
 import authRoutes from "./routes/authRoutes.js";
 import jobRoutes from "./routes/jobRoutes.js";
 import applicationRoutes from "./routes/applicationRoutes.js";
@@ -13,9 +13,17 @@ dotenv.config();
 
 const app = express();
 
-app.use(cors())
+app.use(cors({
+  origin: "*"
+}));
 app.use(express.json())
+const __dirname = path.resolve();
 
+app.use(express.static(path.join(__dirname, "../../frontend/dist")));
+
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "../../frontend/dist/index.html"));
+});
 
 const MONGO_URI = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/openats_plus";
 const PORT = process.env.PORT || 4000;
