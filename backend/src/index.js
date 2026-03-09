@@ -16,20 +16,15 @@ const app = express();
 app.use(cors({ origin: "*" }));
 app.use(express.json());
 
-/* Resolve project root */
 const __dirname = path.resolve();
-
-/* React build directory */
 const frontendPath = path.join(__dirname, "frontend", "dist");
 
-/* Serve React static files */
 app.use(express.static(frontendPath));
 
-/* Environment variables */
 const MONGO_URI = process.env.MONGO_URI;
 const PORT = process.env.PORT || 4000;
 
-/* ---------------- API ROUTES ---------------- */
+/* API ROUTES */
 
 app.get("/api/health", (_req, res) => {
   res.json({ status: "ok", service: "openats-plus-backend" });
@@ -40,21 +35,21 @@ app.use("/api/jobs", jobRoutes);
 app.use("/api/applications", applicationRoutes);
 app.use("/api/contact", contactRoutes);
 
-/* ---------------- FILE UPLOADS ---------------- */
+/* Uploads */
 
 const uploadsDir =
   process.env.UPLOADS_DIR || path.join(__dirname, "uploads");
 
 app.use("/uploads", express.static(uploadsDir));
 
-/* ---------------- REACT FALLBACK ---------------- */
-/* This must be LAST */
+/* React fallback */
 
-app.get("*", (req, res) => {
+app.use((req, res, next) => {
+  if (req.path.startsWith("/api")) return next();
   res.sendFile(path.join(frontendPath, "index.html"));
 });
 
-/* ---------------- SERVER START ---------------- */
+/* Start server */
 
 async function start() {
   try {
