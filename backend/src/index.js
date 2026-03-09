@@ -27,7 +27,9 @@ app.get("*", (req, res) => {
 
 const MONGO_URI = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/openats_plus";
 const PORT = process.env.PORT || 4000;
-
+app.use((req, res) => {
+  res.sendFile(path.join(__dirname, "../../frontend/dist/index.html"));
+});
 
 app.get("/api/health", (_req, res) => {
   res.json({ status: "ok", service: "openats-plus-backend" });
