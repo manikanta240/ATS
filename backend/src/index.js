@@ -21,9 +21,7 @@ const __dirname = path.resolve();
 /* Serve React build */
 app.use(express.static(path.join(__dirname, "../../frontend/dist")));
 
-const MONGO_URI =
-  process.env.MONGO_URI || "mongodb://127.0.0.1:27017/openats_plus";
-
+const MONGO_URI = process.env.MONGO_URI;
 const PORT = process.env.PORT || 4000;
 
 /* API Routes */
@@ -42,7 +40,7 @@ const uploadsDir =
 
 app.use("/uploads", express.static(uploadsDir));
 
-/* React fallback route (must be LAST) */
+/* React fallback route (LAST) */
 app.use((req, res) => {
   res.sendFile(path.join(__dirname, "../../frontend/dist/index.html"));
 });
@@ -62,4 +60,4 @@ async function start() {
   }
 }
 
-start();    
+start();
