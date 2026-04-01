@@ -4,6 +4,8 @@ export async function extractTextFromPdf(buffer) {
 
 export function parseResumeText(text) {
   const lower = text.toLowerCase();
+  const emailMatch = text.match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i);
+  const email = emailMatch ? emailMatch[0].trim().toLowerCase() : undefined;
 
   const skills = [];
   const knownSkills = [
@@ -46,6 +48,7 @@ export function parseResumeText(text) {
   }
 
   return {
+    email,
     skills,
     yearsExperience,
     educationLevel,

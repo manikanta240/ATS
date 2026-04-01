@@ -4,6 +4,7 @@ const { Schema, model } = mongoose;
 
 const ParsedResumeSchema = new Schema(
   {
+    email: { type: String },
     skills: { type: [String], default: [] },
     yearsExperience: { type: Number, default: 0 },
     educationLevel: { type: String },

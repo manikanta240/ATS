@@ -15,19 +15,26 @@ export function scoreCandidateForJob(parsed, job) {
     projects: createDimension(weights.projects),
   };
 
-  const requiredSkills = (job.requiredSkills || []).map((s) => s.toLowerCase());
-  const candidateSkills = (parsed.skills || []).map((s) => s.toLowerCase());
-  const matched = requiredSkills.filter((s) => candidateSkills.includes(s));
-  const matchCount = matched.length;
-  const totalRequired = requiredSkills.length || 1;
-  const skillsScore = (matchCount / totalRequired) * dim.skills.max;
-  dim.skills.score = Math.round(skillsScore);
-  dim.skills.reasons.push(
-    `Matched ${matchCount}/${totalRequired} required skills → ${dim.skills.score}/${dim.skills.max}`
-  );
-  const missingSkills = requiredSkills.filter((s) => !candidateSkills.includes(s));
-  if (missingSkills.length) {
-    dim.skills.reasons.push(`Missing critical skills: ${missingSkills.join(", ")}`);
+  const requiredSkills = (job.requiredSkills || []).map((s) => s.toLowerCase().trim());
+  const candidateSkills = (parsed.skills || []).map((s) => s.toLowerCase().trim());
+  if (requiredSkills.length === 0) {
+    dim.skills.score = dim.skills.max;
+    dim.skills.reasons.push(
+      `No required skills configured for this role → ${dim.skills.score}/${dim.skills.max}`
+    );
+  } else {
+    const matched = requiredSkills.filter((s) => candidateSkills.includes(s));
+    const matchCount = matched.length;
+    const totalRequired = requiredSkills.length;
+    const skillsScore = (matchCount / totalRequired) * dim.skills.max;
+    dim.skills.score = Math.round(skillsScore);
+    dim.skills.reasons.push(
+      `Matched ${matchCount}/${totalRequired} required skills → ${dim.skills.score}/${dim.skills.max}`
+    );
+    const missingSkills = requiredSkills.filter((s) => !candidateSkills.includes(s));
+    if (missingSkills.length) {
+      dim.skills.reasons.push(`Missing critical skills: ${missingSkills.join(", ")}`);
+    }
   }
 
   const years = parsed.yearsExperience ?? 0;

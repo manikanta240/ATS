@@ -52,10 +52,12 @@ function CandidateRankingPage() {
     }
 
     try {
+      const token = localStorage.getItem("openats_token");
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
         body: JSON.stringify({ email }),
       });
@@ -186,6 +188,14 @@ function CandidateRankingPage() {
                     : String(selected.candidateId).slice(-8)}
                 </span>
               </p>
+              {!anonymousMode && (
+                <p className="mb-3 text-xs text-slate-400">
+                  Candidate Email:{" "}
+                  <span className="font-mono text-slate-200">
+                    {selected.email || "Not detected from resume"}
+                  </span>
+                </p>
+              )}
 
               <p className="text-lg font-semibold text-indigo-400">
                 Final Score: {selected.overallScore}
@@ -221,13 +231,16 @@ function CandidateRankingPage() {
                 </h4>
                 <button
                   onClick={() => contactCandidate(selected.email)}
+                  disabled={anonymousMode || !selected.email}
                   className="mt-4 rounded-lg bg-indigo-500 px-4 py-2 text-sm text-white hover:bg-indigo-400"
                 >
                   Contact Candidate
                 </button>
-                <p className="text-xs text-slate-400">
-                  Email: {selected.email}
-                </p>
+                {anonymousMode && (
+                  <p className="text-xs text-slate-500">
+                    Disable anonymous mode to view contact details.
+                  </p>
+                )}
                 <ul className="list-disc space-y-1 pl-5 text-xs text-slate-300">
                   {selected.explanation?.map((line, idx) => (
                     <li key={idx}>{line}</li>

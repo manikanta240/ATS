@@ -107,6 +107,7 @@ router.post(
         biasFlags,
         anonymousModeUsed: anonymousMode,
         parsedPreview: {
+          email: parsed.email,
           skills: parsed.skills,
           yearsExperience: parsed.yearsExperience,
         },
@@ -144,8 +145,10 @@ router.get(
           candidateId: app.candidateId,
           overallScore: app.overallScore,
           dimensionScores: app.dimensionScores,
+          explanation: app.explanation,
           anonymousModeUsed: app.anonymousModeUsed,
           createdAt: app.createdAt,
+          email: candidate?.parsed?.email || null,
           candidateSummary: candidate
             ? {
                 resumeUrl: candidate.resumeUrl,
